@@ -1,7 +1,7 @@
 
 
 const express = require("express");
-const { userModel, purchaseModel } = require('../db');
+const { userModel, purchaseModel, courseModel } = require('../db');
 const bcrypt = require('bcrypt');
 const Router = express.Router;
 const userRouter = Router();
@@ -80,8 +80,15 @@ userRouter.get('/purchase', userMiddleWare, async function (req, res) {
     try {
         const userId = req.userId;
         const purchases = await purchaseModel.find({ userId });
-        res.json({ purchases });
-    } catch (error) {
+       
+        const courseData=await courseModel.find({
+          _id:{$in:purchases.map(x=>x.courseId)}
+        })
+        res.json({ purchases ,
+          courseData
+        });
+    } 
+     catch (error) {
         res.status(500).json({ message: "Failed to fetch purchases", error: error.message });
     }
 });
