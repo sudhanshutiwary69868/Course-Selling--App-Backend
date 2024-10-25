@@ -1,8 +1,8 @@
 const express=require('express')
 const Router=express.Router
 const adminRouter=Router()
-const {adminModel}=require('../db')
-const {z}=require('zod')
+const {adminModel,courseModel}=require('../db')
+const {z,string}=require('zod')
 const bcrypt = require('bcrypt');
 const jwt=require('jsonwebtoken')
 const {JWT_ADMIN_PASSWORD}=require('../config')

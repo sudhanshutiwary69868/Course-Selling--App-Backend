@@ -33,7 +33,7 @@ const CourseSchema = new Schema({
 
 const PurchaseSchema = new Schema({
   courseId: { type: ObjectId, ref: 'course' }, // Reference to the 'course' model
-  UserId: { type: ObjectId, ref: 'user' } // Reference to the 'user' model
+  userId: { type: ObjectId, ref: 'user' } // Reference to the 'user' model
 });
 
 
