@@ -7,6 +7,10 @@ const bcrypt = require('bcrypt');
 const jwt=require('jsonwebtoken')
 const {JWT_ADMIN_PASSWORD}=require('../config')
 const { AdminMiddleware } = require('../middlewares/admin')
+const {limiter}=require('../middlewares/ratelimit')
+adminRouter.use(limiter)
+const cookieParser = require('cookie-parser');
+adminRouter.use(cookieParser())
 
 
 
@@ -66,10 +70,10 @@ adminRouter.post('/signin',async function(req,res){
  
   })
   if(!admin){
-    res.json({
+  return  res.json({
       message:"user does not exist"
     })
-    return
+ 
 
   }
   const hashedPassword=await bcrypt.compare(password,admin.password)
@@ -80,9 +84,15 @@ adminRouter.post('/signin',async function(req,res){
     return
   }
  const token= jwt.sign({id:admin._id},JWT_ADMIN_PASSWORD)
- res.json({
-  token:token
- })
+res.cookie('token',token,{
+  httpOnly:true,
+  maxAge:360000,
+  sameSite:'strict'
+
+})
+return res.json({
+  message:"login successful"
+})
 
 
 })
@@ -111,7 +121,7 @@ adminRouter.put('/course',AdminMiddleware,async function(req,res){
   const {title,description,imageUrl,price,courseId}=req.body
  const course= await courseModel.updateOne({
   _id:courseId,
-  createrId:adminId
+  AdminId:adminId
 
  }, {
     title,

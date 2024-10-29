@@ -3,11 +3,13 @@ const Router=express.Router
 const courseRouter=Router()
 const {userMiddleWare}=require('../middlewares/user')
 const {purchaseModel, courseModel}=require('../db')
+const {limiter}=require('../middlewares/ratelimit')
+courseRouter.use(limiter)
 courseRouter.post('/purchase',userMiddleWare,async function(req,res){
   const userId=req.userId
   const courseId=req.body.courseId
   if(!userId){
-    res.json({
+  return  res.json({
       message:"please provide a valid user id"
     })
   }

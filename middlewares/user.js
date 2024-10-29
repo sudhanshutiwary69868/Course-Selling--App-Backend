@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken');
 const { JWT_USER_PASSWORD } = require('../config');
+const cookieParser = require('cookie-parser');
+
 
 function userMiddleWare(req, res, next) {
-    const token = req.headers.token; // assuming the token is passed as a header
+    const token = req.cookies.token; 
 
     if (!token) {
         return res.status(403).json({ message: 'Token is required' });

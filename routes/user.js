@@ -1,5 +1,3 @@
-
-
 const express = require("express");
 const { userModel, purchaseModel, courseModel } = require('../db');
 const bcrypt = require('bcrypt');
@@ -9,8 +7,12 @@ const { z, string } = require('zod');
 const jwt = require('jsonwebtoken');
 const { JWT_USER_PASSWORD } = require('../config');
 const { userMiddleWare } = require('../middlewares/user');
+const {limiter}=require('../middlewares/ratelimit')
+userRouter.use(limiter)
+const cookieParser = require('cookie-parser');
+userRouter.use(cookieParser())
 
-// Signup route
+
 userRouter.post('/signup', async function (req, res) {
     const validation = z.object({
         email: string().email().min(5).max(20),
@@ -53,7 +55,7 @@ userRouter.post('/signup', async function (req, res) {
     }
 });
 
-// Signin route
+
 userRouter.post('/signin', async function (req, res) {
     try {
         const { email, password } = req.body;
@@ -75,7 +77,6 @@ userRouter.post('/signin', async function (req, res) {
     }
 });
 
-// Purchase route
 userRouter.get('/purchase', userMiddleWare, async function (req, res) {
     try {
         const userId = req.userId;
